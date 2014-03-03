@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+      <head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+    <title>Profile image upload without reloading the page</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, projection">
+	<script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
+	<script type="text/javascript" src="js/jQuery-custom-input-file.js"></script>
+    <script type="text/javascript" src="js/jquery.upload.js"></script>
+	<script type="text/javascript">
+	      var uploadURL = "http://demo.addins.com/upload_image_20140302/upload.php";
+ 	      $(document).ready(function(){
+                    $('a#uploadFile').file();
+                    $('a#delete').click(function(){
+                          $('input#profileImageFile').val("");
+                          $('img#profileImage').attr("src","images/profileBlank.jpg");
+                          $('div#messageBox').html("Image deleted !");
+                          $('div#messageBox').attr("class","success");
+                          $('a#delete').hide();
+                    });
+                    $('input#uploadFile').file().choose(function(e, input) {
+                        input.upload(uploadURL, function(res) {
+                            if (res=="invalid"){
+                                $('div#messageBox').attr("class","error");
+                                $('div#messageBox').html("Invalid extension !");
+                            }else{
+							  alert(res);
+                                $('div#messageBox').attr("class","success");
+                                $('div#messageBox').html("File uploaded !");
+                                $('img#profileImage').attr("src","http://demo.addins.com/upload_image_20140302/uploaded-images/"+res);
+                                $('input#profileImageFile').val(res);
+                                $('a#delete').show();
+                                $(this).remove();
+                            }
+                        }, '');                  
+              });
+               });
+ 	</script>
+      </head>
+      <body>
+	    <div class="imageContainer">
+                <img alt=""  src="images/profileBlank.jpg" width="150" height="150" id="profileImage">
+                <a href="#" id="uploadFile" title="Upload"><img alt=""  src="images/upload.jpg"></a>
+                <a href="#" id="delete" title="Delete" style="display:none;position:relative;z-index:999999;"><img alt=""  src="images/delete.jpg"></a>
+                <div id="messageBox"></div>
+	    </div>
+            <form  method="post" class="profileForm"><br>
+            <h1>Profile</h1>
+            <label>Full name : </label><input type="text"><br>
+            <label>Address : </label><input type="text"><br>
+            <label>Telephone : </label><input type="text"><br>
+            <label>Email : </label><input type="text"><br>
+            <label>Webpage : </label><input type="text"><br>
+            <div class="clear"></div>
+            <input type="hidden" value="" id="profileImageFile">
+            <input type="submit" value="Save" class="submit">
+            </form>
+      </body>
+</html>
