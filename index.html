@@ -1,59 +1,62 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-      <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
-    <title>Profile image upload without reloading the page</title>
-    <link rel="stylesheet" href="style.css" type="text/css" media="screen, projection">
-	<script type="text/javascript" src="jquery-1.4.3.min.js"></script>
-	<script type="text/javascript" src="jQuery-custom-input-file.js"></script>
-    <script type="text/javascript" src="jquery.upload.js"></script>
-	<script type="text/javascript">
-	      var uploadURL = "http://demo.addins.com/upload_image_20140302/upload.php";
- 	      $(document).ready(function(){
-                    $('a#uploadFile').file();
-                    $('a#delete').click(function(){
-                          $('input#profileImageFile').val("");
-                          $('img#profileImage').attr("src","images/profileBlank.jpg");
-                          $('div#messageBox').html("Image deleted !");
-                          $('div#messageBox').attr("class","success");
-                          $('a#delete').hide();
-                    });
-                    $('input#uploadFile').file().choose(function(e, input) {
-                        input.upload(uploadURL, function(res) {
-                            if (res=="invalid"){
-                                $('div#messageBox').attr("class","error");
-                                $('div#messageBox').html("Invalid extension !");
-                            }else{
-							  alert(res);
-                                $('div#messageBox').attr("class","success");
-                                $('div#messageBox').html("File uploaded !");
-                                $('img#profileImage').attr("src","http://demo.addins.com/upload_image_20140302/uploaded-images/"+res);
-                                $('input#profileImageFile').val(res);
-                                $('a#delete').show();
-                                $(this).remove();
-                            }
-                        }, '');                  
-              });
-               });
- 	</script>
-      </head>
-      <body>
-	    <div class="imageContainer">
-                <img alt=""  src="profileBlank.jpg" width="150" height="150" id="profileImage">
-                <a href="#" id="uploadFile" title="Upload"><img alt=""  src="upload.jpg"></a>
-                <a href="#" id="delete" title="Delete" style="display:none;position:relative;z-index:999999;"><img alt=""  src="delete.jpg"></a>
-                <div id="messageBox"></div>
-	    </div>
-            <form  method="post" class="profileForm"><br>
-            <h1>Profile</h1>
-            <label>Full name : </label><input type="text"><br>
-            <label>Address : </label><input type="text"><br>
-            <label>Telephone : </label><input type="text"><br>
-            <label>Email : </label><input type="text"><br>
-            <label>Webpage : </label><input type="text"><br>
-            <div class="clear"></div>
-            <input type="hidden" value="" id="profileImageFile">
-            <input type="submit" value="Save" class="submit">
-            </form>
-      </body>
+<head>
+    <title>File Transfer Example</title>
+    <script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.js"></script>
+    <script type="text/javascript" charset="utf-8">
+ 
+        // Wait for PhoneGap to load
+        document.addEventListener("deviceready", onDeviceReady, false);
+ 
+        // PhoneGap is ready
+        function onDeviceReady() {
+ 		// Do cool things here...
+        }
+ 
+        function getImage() {
+            // Retrieve image file location from specified source
+            navigator.camera.getPicture(uploadPhoto, function(message) {
+			alert('get picture failed');
+		},{
+			quality: 50, 
+			destinationType: navigator.camera.DestinationType.FILE_URI,
+			sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+		}
+            );
+ 
+        }
+ 
+        function uploadPhoto(imageURI) {
+            var options = new FileUploadOptions();
+            options.fileKey="file";
+            options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
+            options.mimeType="image/jpeg";
+ 
+            var params = new Object();
+            params.value1 = "test";
+            params.value2 = "param";
+ 
+            options.params = params;
+            options.chunkedMode = false;
+ 
+            var ft = new FileTransfer();
+            ft.upload(imageURI, "http://sana4591.dc7.us/02march/upload.php", win, fail, options);
+        }
+ 
+        function win(r) {
+            console.log("Code = " + r.responseCode);
+            console.log("Response = " + r.response);
+            console.log("Sent = " + r.bytesSent);
+            alert(r.response);
+        }
+ 
+        function fail(error) {
+            alert("An error has occurred: Code = " = error.code);
+        }
+ 
+        </script>
+</head>
+<body>
+    <button onclick="getImage();">Upload a Photo</button>
+</body>
 </html>
